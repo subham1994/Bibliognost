@@ -26,7 +26,7 @@ class GoodReads(object):
     def get_similar_books(self):
         """
         Returns a list of similar books for a book object
-
+        
         :return: list containing goodreads book ids
         """
         similar_books = []
