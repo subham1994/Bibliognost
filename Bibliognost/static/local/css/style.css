@@ -1,0 +1,67 @@
+@media (max-width: 720px) {
+    .ui.items > .item > .content {
+        text-align: center;
+    }
+}
+
+#page-contents {
+    padding-top: 100px;
+}
+
+p {
+    color: #455a64;
+}
+
+#navbar {
+    box-shadow: 0px 3px 5px rgba(0, 0, 0, 0.2);
+}
+
+
+.menu .container .header.item {
+    font-size: 22px;
+    font-weight: 600;
+    color: #455a64;
+}
+
+.menu .container a.item {
+    font-size: 16px;
+    font-weight: 600;
+    color: #455a64;
+}
+
+.menu .container a.item.active.underline {
+    font-size: 16px;
+    font-weight: 600;
+    color: #455a64;
+    margin-top: 0;
+    margin-bottom: -1px;
+    border-bottom: 4px solid #455a64;
+}
+
+.menu .container a.item:after {
+    content: '';
+    position: absolute;
+    bottom: -1px;
+    left: 0;
+    width: 0%;
+    border-bottom: 4px solid #455a64;
+    transition: 0.4s;
+}
+
+.menu .container a.item:not(.active):hover:after {
+    width: 100%;
+}
+
+.primary-text {
+    color: #455a64;;
+}
+
+.text-center {
+    text-align: center;
+}
+
+.ui.button {
+    border-radius: .1975rem;
+    font-weight: 600;
+    padding: 1em 1.5em;
+}
