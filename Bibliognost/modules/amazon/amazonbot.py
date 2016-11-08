@@ -48,6 +48,7 @@ class AmazonBot(object):
 		#: if latter is the case, num_pages must be set to `1`.
 		elif soup.find('div', attrs={'id': 'cm_cr-review_list'}):
 			return 1, soup
+		return 0, soup
 
 	def build_review_dict(self, review):
 		"""
@@ -105,11 +106,12 @@ class AmazonBot(object):
 				tasks.append(self.get_reviews_from_page(page, soup=soup))
 			else:
 				tasks.append(self.get_reviews_from_page(page))
-		waiting_tasks = asyncio.wait(tasks, return_when=asyncio.FIRST_EXCEPTION)
 		start = time.time()
-		completed_tasks, _ = loop.run_until_complete(waiting_tasks)
-		loop.close()
+		if tasks:
+			waiting_tasks = asyncio.wait(tasks, return_when=asyncio.FIRST_EXCEPTION)
+			completed_tasks, _ = loop.run_until_complete(waiting_tasks)
+			loop.close()
+			for task in completed_tasks:
+				reviews.extend(task.result())
 		logger.info('Fetched reviews from {p} page(s) in: {t} s'.format(t=time.time() - start, p=num_pages))
-		for task in completed_tasks:
-			reviews.extend(task.result())
 		return reviews
