@@ -21,6 +21,7 @@ def load_user(email):
     :type email: str
     :return: User object, if found, else None.
     """
+    
     return User.get(email=email)
 
 
@@ -204,7 +205,7 @@ class User(UserMixin):
         response = insert_user_data_to_db(**user_info, password=user._password_hash)
         if response:
             return user
-
+    
     @classmethod
     def get(cls, **field_name_with_val):
         """
