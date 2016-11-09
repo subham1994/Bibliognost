@@ -10,44 +10,54 @@ from Bibliognost import get_logger
 
 logger = get_logger('amazonbot')
 
+#: TO-DO - Mark all the pages which could not be fetched
+#: due to any reason(remote server bocking our request to prevent
+#: DDOS, network errors etc). When another request comes with
+#: the same ISBN, try to fetch only those pages which
+#: couldn't be fetched in the last request. Keep doing
+#: this until all the reviews have been fetched.
+
 
 class AmazonBot(object):
 	def __init__(self, isbn):
-		self.isbn = isbn
-		self.url_template = 'http://www.amazon.in/product-reviews/{isbn}/?showViewpoints=1&pageNumber={page_no}'
+		self.url_template = 'http://www.amazon.in/product-reviews/' + isbn + '/?showViewpoints=1&pageNumber={page_no}'
 		self.headers = {'user-agent': 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:49.0) Gecko/20100101 Firefox/49.0'}
 
-	async def create_soup(self, page_no):
+	async def create_soup(self, session, page_no):
 		"""
 		Makes async request to the server and parses the
 		responses using lxml tree builder
 
-		:param page_no: int, which page to fetch
+		:param session: aiohttp session object to fetch url
+		:type session: aiohttp.client.ClientSession
+		:param page_no: the webpage to fetch
+		:type page_no: int
 		:return: bs4.BeautifulSoup object
 		"""
-		url = self.url_template.format(isbn=self.isbn, page_no=page_no)
-		response = await aiohttp.request('GET', url, headers=self.headers)
-		html = await response.text()
+		url = self.url_template.format(page_no=page_no)
+		async with session.get(url) as response:
+			html = await response.text()
 		return BeautifulSoup(html, 'lxml')
 
-	async def _num_review_pages(self):
+	async def _num_review_pages(self, session):
 		"""
 		get the number of pages
 
-		:return: tuple[int, bs4.BeautifulSoup]
+		:return: tuple[int, bs4.BeautifulSoup], total number of pages and soup object
 		"""
-		soup = await self.create_soup(1)
-		pagination_bar = soup.find('div', attrs={'id': 'cm_cr-pagination_bar'})
-		if pagination_bar:
-			page_btn_li = pagination_bar.findAll('li', class_='page-button')
-			return int(page_btn_li[-1].text.strip()), soup
-		#: No pagination bar on the page doesn't imply
-		#: that there are no reviews. It can also be due to
-		#: the fact that the number of reviews were few enough
-		#: to be accomodated on a single page only.
-		#: if latter is the case, num_pages must be set to `1`.
-		elif soup.find('div', attrs={'id': 'cm_cr-review_list'}):
-			return 1, soup
+		soup = await self.create_soup(session, 1)
+		if soup:
+			pagination_bar = soup.find('div', attrs={'id': 'cm_cr-pagination_bar'})
+			if pagination_bar:
+				page_btn_li = pagination_bar.findAll('li', class_='page-button')
+				return int(page_btn_li[-1].text.strip()), soup
+			#: No pagination bar on the page doesn't imply
+			#: that there are no reviews. It can also be due to
+			#: the fact that the number of reviews were few enough
+			#: to be accomodated on a single page only.
+			#: if latter is the case, num_pages must be set to `1`.
+			elif soup.find('div', attrs={'id': 'cm_cr-review_list'}):
+				return 1, soup
 		return 0, soup
 
 	def build_review_dict(self, review):
@@ -55,6 +65,7 @@ class AmazonBot(object):
 		builds a single review
 
 		:param review: review node containing a single review's metadata
+		:type review: bs4.element.Tag
 		:return: dict
 		"""
 		review_dict = dict()
@@ -70,6 +81,7 @@ class AmazonBot(object):
 		builds the list of all reviews available on a page
 
 		:param reviews_list_node: node containing every review node on the page
+		:type reviews_list_node: bs4.element.Tag
 		:return: list containing all the reviews available on current page
 		"""
 		reviews = []
@@ -79,10 +91,12 @@ class AmazonBot(object):
 					reviews.append(self.build_review_dict(review))
 		return reviews
 
-	async def get_reviews_from_page(self, page_no, soup=None):
-		if not soup:
-			soup = await self.create_soup(page_no)
+	async def get_reviews_from_page(self, session, page_no, soup_obj=None):
+		soup = soup_obj if soup_obj else await self.create_soup(session, page_no)
 		reviews_list_node = soup.find('div', attrs={'id': 'cm_cr-review_list'})
+		logger.info('Fetching page: {page}'.format(page=page_no))
+		if not reviews_list_node:
+			return
 		return self.build_reviews_list(reviews_list_node)
 
 	def get_reviews(self):
@@ -94,24 +108,29 @@ class AmazonBot(object):
 
 		:return: `list[dict]` which is json serializable
 		"""
-		reviews, tasks = [], []
 		selector = selectors.SelectSelector()
 		loop = asyncio.SelectorEventLoop(selector)
 		asyncio.set_event_loop(loop)
-		num_pages, soup = loop.run_until_complete(self._num_review_pages())
-		for page in range(1, num_pages + 1):
-			if page == 1:
-				#: Reuse the response received on sending request
-				#: to the first page to get total page count
-				tasks.append(self.get_reviews_from_page(page, soup=soup))
-			else:
-				tasks.append(self.get_reviews_from_page(page))
 		start = time.time()
-		if tasks:
-			waiting_tasks = asyncio.wait(tasks, return_when=asyncio.FIRST_EXCEPTION)
-			completed_tasks, _ = loop.run_until_complete(waiting_tasks)
+
+		with aiohttp.ClientSession() as session:
+			num_pages, soup = loop.run_until_complete(self._num_review_pages(session))
+			pending_fetch_review_tasks = []
+			for page in range(1, num_pages + 1):
+				if soup and page == 1:
+					pending_fetch_review_tasks.append(self.get_reviews_from_page(session, page, soup_obj=soup))
+				else:
+					pending_fetch_review_tasks.append(self.get_reviews_from_page(session, page))
+			reviews = loop.run_until_complete(asyncio.gather(*pending_fetch_review_tasks, return_exceptions=True))
 			loop.close()
-			for task in completed_tasks:
-				reviews.extend(task.result())
+
 		logger.info('Fetched reviews from {p} page(s) in: {t} s'.format(t=time.time() - start, p=num_pages))
-		return reviews
+
+		filtered_reviews = []
+		for index, reviews_list in enumerate(reviews):
+			if isinstance(reviews_list, Exception) or not reviews_list:
+				logger.warning('Failed to get result for page: {p}, cause={e}'.format(p=index + 1, e=reviews_list))
+			else:
+				for review in reviews_list:
+					filtered_reviews.append(review)
+		return filtered_reviews
