@@ -11,11 +11,11 @@ from Bibliognost import get_logger
 logger = get_logger('amazonbot')
 
 #: TO-DO - Mark all the pages which could not be fetched
-#: due to any reason(remote server bocking our request to prevent
-#: DDOS, network errors etc). When another request comes with
-#: the same ISBN, try to fetch only those pages which
-#: couldn't be fetched in the last request. Keep doing
-#: this until all the reviews have been fetched.
+#: due to any reason(remote server blocking our request to
+#: prevent DDOS attack, network errors etc). When another
+#: request comes with the same ISBN, try to fetch only those
+#: pages which couldn't be fetched in the last request. Keep
+#: doing this until all the reviews have been fetched.
 
 
 class AmazonBot(object):
@@ -85,18 +85,17 @@ class AmazonBot(object):
 		:return: list containing all the reviews available on current page
 		"""
 		reviews = []
-		for review in reviews_list_node.children:
-			if type(review) is Tag and review.get('data-hook') and review['data-hook'] == 'review':
-				if review.get('class') and 'review' in review['class']:
-					reviews.append(self.build_review_dict(review))
+		if reviews_list_node:
+			for review in reviews_list_node.children:
+				if type(review) is Tag and review.get('data-hook') and review['data-hook'] == 'review':
+					if review.get('class') and 'review' in review['class']:
+						reviews.append(self.build_review_dict(review))
 		return reviews
 
 	async def get_reviews_from_page(self, session, page_no, soup_obj=None):
 		soup = soup_obj if soup_obj else await self.create_soup(session, page_no)
 		reviews_list_node = soup.find('div', attrs={'id': 'cm_cr-review_list'})
 		logger.info('Fetching page: {page}'.format(page=page_no))
-		if not reviews_list_node:
-			return
 		return self.build_reviews_list(reviews_list_node)
 
 	def get_reviews(self):
@@ -129,7 +128,8 @@ class AmazonBot(object):
 		filtered_reviews = []
 		for index, reviews_list in enumerate(reviews):
 			if isinstance(reviews_list, Exception) or not reviews_list:
-				logger.warning('Failed to get result for page: {p}, cause={e}'.format(p=index + 1, e=reviews_list))
+				cause = 'request blocked by remote server' if not reviews_list else reviews_list
+				logger.warning('Failed to get result for page: {p}, cause={e}'.format(p=index + 1, e=cause))
 			else:
 				for review in reviews_list:
 					filtered_reviews.append(review)
