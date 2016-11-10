@@ -3,8 +3,7 @@ from flask import jsonify, request
 from . import biblio
 from Bibliognost import get_logger
 from ..modules.amazon import AmazonBot
-from ..modules.goodreads import GoodReads
-
+from ..modules.goodreads import GoodReads, BookSearch
 
 logger = get_logger(__file__)
 
