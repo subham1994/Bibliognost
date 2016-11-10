@@ -1,4 +1,4 @@
-#: Fields to fetch from book.show api call goodreads
+#: Nodes to fetch from book.show api call from goodreads
 
 BOOK_NODE_TAG = 'book'
 BOOK_NODE_DESCENDENTS = [
@@ -18,3 +18,12 @@ AUTHORS_NODE_CHILD_DESCENDENTS = ['id', 'name']
 SIMILAR_BOOKS_NODE_TAG = 'similar_books'
 SIMILAR_BOOKS_NODE_CHILD = 'book'
 SIMILAR_BOOKS_NODE_CHILD_DESCENDENTS = ['id']
+
+#: Nodes to fetch from search.book api call from goodreads
+
+SEARCH_NODE_TAG = 'search'
+RESULT_NODE_TAG = 'results'
+WORK_NODE_TAG = 'work'
+
+BEST_BOOK_NODE_TAG = 'best_book'
+BEST_BOOK_NODE_DESCENDENTS = ['id', 'title', 'small_image_url']
