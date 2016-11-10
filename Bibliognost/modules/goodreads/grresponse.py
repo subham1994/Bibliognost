@@ -1,7 +1,7 @@
 #: Nodes to fetch from book.show api call from goodreads
 
-CORE_DATA_NODE_TAG = 'book'
-CORE_DATA_NODE_DESCENDENTS = [
+BOOK_NODE_TAG = 'book'
+BOOK_NODE_DESCENDENTS = [
     'id', 'title', 'isbn', 'image_url', 'small_image_url',
     'publication_year', 'publication_month', 'publication_day',
     'publisher', 'description', 'url', 'num_pages',
@@ -9,6 +9,7 @@ CORE_DATA_NODE_DESCENDENTS = [
 
 RATINGS_NODE_TAG = 'work'
 RATINGS_DIST_TAG = 'rating_dist'
+TEXT_REVIEWS_COUNT_TAG = 'text_reviews_count'
 
 AUTHORS_NODE_TAG = 'authors'
 AUTHORS_NODE_CHILD = 'author'
