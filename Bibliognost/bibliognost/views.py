@@ -15,6 +15,12 @@ def index():
 	return jsonify(book.get_book_data())
 
 
+@biblio.route('/search')
+def search():
+	results = BookSearch(request.args.get('q')).get_results()
+	return jsonify(results)
+
+
 @biblio.route('/reviews/<isbn>')
 def reviews(isbn):
 	try:
