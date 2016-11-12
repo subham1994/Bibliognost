@@ -3,7 +3,7 @@ from flask import jsonify, request
 from . import biblio
 from Bibliognost import get_logger
 from ..modules.amazon import AmazonBot
-from ..modules.goodreads import GoodReads, BookSearch
+from ..modules.goodreads import GoodReads, BookSearch, GoodReadsBot
 
 logger = get_logger(__file__)
 
@@ -20,12 +20,23 @@ def search():
 	return jsonify(results)
 
 
-@biblio.route('/reviews/<isbn>')
-def reviews(isbn):
+@biblio.route('/amazon-reviews')
+def amazon_reviews():
 	try:
-		amazon_reviews = AmazonBot(isbn).get_reviews()
+		amzn_reviews = AmazonBot(request.args.get('isbn')).get_reviews()
 	except Exception as e:
 		logger.exception(e)
 		return jsonify([])
 	else:
-		return jsonify(amazon_reviews)
+		return jsonify(amzn_reviews)
+
+
+@biblio.route('/goodreads-review')
+def goodreads_reviews():
+	try:
+		gr_reviews = GoodReadsBot(request.args.get('url'), 100).get_reviews()
+	except Exception as e:
+		logger.exception(e)
+		return jsonify([])
+	else:
+		return jsonify(gr_reviews)
