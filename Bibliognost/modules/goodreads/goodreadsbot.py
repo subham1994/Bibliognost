@@ -62,7 +62,7 @@ class GoodReadsBot(object):
 
 	def _get_rating(self, static_star_node):
 		"""
-		return the for the book
+		return the rating for the book
 
 		:param static_star_node: node containing all the star spans
 		:type static_star_node: bs4.element.Tag
@@ -154,8 +154,16 @@ class GoodReadsBot(object):
 		asyncio.set_event_loop(loop)
 		start = time.time()
 		with aiohttp.ClientSession() as session:
-			fetch_reviews_from_first_page = loop.run_until_complete(
+			reviews_from_first_page = loop.run_until_complete(
 				asyncio.gather(self.build_reviews_from_soup(session), return_exceptions=True)
 			)
 		logger.info('Fetched reviews from {p} page(s) in: {t} s'.format(t=time.time() - start, p=num_pages))
-		return [review for review in fetch_reviews_from_first_page if not isinstance(review, Exception)]
+		filtered_reviews = []
+		for index, reviews_list in enumerate(reviews_from_first_page):
+			if isinstance(reviews_list, Exception) or not reviews_list:
+				cause = 'request blocked by remote server' if not reviews_list else reviews_list
+				logger.warning('Failed to get result for page: {p}, cause={e}'.format(p=index + 1, e=cause))
+			else:
+				for review in reviews_list:
+					filtered_reviews.append(review)
+		return filtered_reviews
