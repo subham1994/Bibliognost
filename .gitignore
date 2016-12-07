@@ -21,14 +21,3 @@ Bibliognost/auth/__pycache__/
 Bibliognost/static/vendor/node_modules
 Bibliognost/static/vendor/semantic
 Bibliognost/static/vendor/semantic.json
-.idea/
-.vscode/
-Bibliognost/__pycache__/
-Bibliognost/auth/__pycache__/
-Bibliognost/bibliognost/__pycache__/
-Bibliognost/models/__pycache__/
-Bibliognost/modules/__pycache__/
-Bibliognost/modules/amazon/__pycache__/
-Bibliognost/modules/goodreads/__pycache__/
-SentimentAnalysis/
-__pycache__/
