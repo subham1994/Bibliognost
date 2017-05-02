@@ -1,7 +1,7 @@
 import itertools
 import multiprocessing
 
-from flask import jsonify, request
+from flask import render_template, jsonify, request
 
 from Bibliognost import get_logger
 from . import biblio
@@ -12,8 +12,13 @@ from ..modules.sent_analysis import fastClassifier
 logger = get_logger(__file__)
 
 
-@biblio.route('/book-meta')
+@biblio.route('/')
 def index():
+	return render_template('base.html')
+
+
+@biblio.route('/book-meta')
+def book_meta():
 	book = GoodReads(request.args.get('book_id'))
 	return jsonify(book.get_book_data())
 
