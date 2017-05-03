@@ -12,7 +12,7 @@ from ..modules.sent_analysis import fastClassifier
 logger = get_logger(__file__)
 
 
-@biblio.route('/book-meta')
+@biblio.route('/')
 def index():
 	return render_template('base.html')
 

@@ -24,6 +24,8 @@ SIMILAR_BOOKS_NODE_CHILD_DESCENDENTS = ['id']
 SEARCH_NODE_TAG = 'search'
 RESULT_NODE_TAG = 'results'
 WORK_NODE_TAG = 'work'
+ORIGINAL_PUBLICATION_YEAR = 'original_publication_year'
 
 BEST_BOOK_NODE_TAG = 'best_book'
-BEST_BOOK_NODE_DESCENDENTS = ['id', 'title', 'small_image_url']
+BEST_BOOK_NODE_DESCENDENTS = ['id', 'title', 'small_image_url', 'author']
+BEST_BOOK_NODE_AUTHOR_NAME = 'name'
