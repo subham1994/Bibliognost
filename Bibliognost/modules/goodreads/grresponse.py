@@ -7,6 +7,7 @@ BOOK_NODE_DESCENDENTS = [
     'publisher', 'description', 'url', 'num_pages',
 ]
 
+BOOK_NODE_DESCRIPTION = 'description'
 RATINGS_NODE_TAG = 'work'
 RATINGS_DIST_TAG = 'rating_dist'
 TEXT_REVIEWS_COUNT_TAG = 'text_reviews_count'
