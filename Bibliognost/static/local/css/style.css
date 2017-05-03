@@ -89,20 +89,47 @@ nav {
     overflow-y: auto;
 }
 
+.collection .collection-item {
+    line-height: 0.8em;
+}
+
 .collection a.collection-item, .collection .collection-item.avatar .title, 
 .collapsible .collapsible-header, .collapsible .collapsible-body,
-p.book-title, p.authors {
+p.book-title, p.authors, .collection-header {
     color: #576366;
 }
 
-.collection .collection-item.avatar .title {
-    font-size: 14px;
+.collection .collection-item.avatar .title, .collection-header,
+.collapsible .collapsible-header {
     font-weight: 700;
 }
 
-.collection-header {
-    font-size: 16px;
-    font-weight: 700;
+.collection .collection-item.avatar .title, .collapsible .collapsible-body {
+    font-size: 14px;
+}
+
+.collapsible .collapsible-header {
+    font-size: 15px;
+}
+
+.collection-header, p.book-title {
+    font-size: 18px;
+}
+
+p.book-title {
+    font-weight: 900;
+}
+
+.collection-item.avatar p.author, p.authors {
+    font-size: 12px;
+}
+
+.collection-item.avatar p.right-align.pub-year {
+    font-size: 11px;
+}
+
+p.authors {
+    display: inline;
 }
 
 .search-loader {
@@ -120,25 +147,9 @@ p.book-title, p.authors {
     display: block;
 }
 
-.collapsible .collapsible-header {
-    font-size: 15px;
-    font-weight: 700;
-}
-
 .collapsible .collapsible-body {
     padding-top: 12px;
     padding-bottom: 12px;
-    font-size: 14px;
-}
-
-p.book-title {
-    font-size: 18px;
-    font-weight: 900;
-}
-
-p.authors {
-    font-size: 12px;
-    display: inline;
 }
 
 p.authors .chip {
@@ -150,6 +161,11 @@ hr {
     height:0; 
     border:0; 
     border-top:1px solid #ddd;
+}
+
+#similar-books-box {
+    position: fixed;
+    width: 370px;
 }
 
 #similar-books {

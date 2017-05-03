@@ -25,8 +25,12 @@ $(document).ready(function() {
 					'<a href="/book/' + data.id + '" class="collection-item avatar">' +
 						'<img src="'+ data.small_image_url +'" alt="" class="circle">' +
 						'<span class="title">' + data.title + '</span>' +
+						'<p class="author">by ' + data.author + '</p>' +
 					'</a>'
 				);
+				if (data.publication_year) {
+					similarBook.append($('<p class="right-align pub-year">' + data.publication_year + '</p>'));
+				}
 				$('#similar-books').append(similarBook);
 			})
 			.catch(function(err) {
