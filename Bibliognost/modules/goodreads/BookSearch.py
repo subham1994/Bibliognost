@@ -23,6 +23,10 @@ class BookSearch:
 			result_dict = {}
 			if best_book_node:
 				for child in grresponse.BEST_BOOK_NODE_DESCENDENTS:
-					result_dict[child] = best_book_node.find(child).text
+					if child == grresponse.BEST_BOOK_NODE_DESCENDENTS[3]:
+						result_dict[child] = best_book_node.find(child).find(grresponse.BEST_BOOK_NODE_AUTHOR_NAME).text
+					else:
+						result_dict[child] = best_book_node.find(child).text
+				result_dict['publication_year'] = node.find(grresponse.ORIGINAL_PUBLICATION_YEAR).text
 				search_results.append(result_dict)
 		return search_results
