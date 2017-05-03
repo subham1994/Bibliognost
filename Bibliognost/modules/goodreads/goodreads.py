@@ -1,3 +1,4 @@
+import re
 import xml.etree.ElementTree as elTree
 from urllib import parse
 
@@ -19,11 +20,16 @@ class GoodReads(object):
 		query_params = parse.urlencode({'key': credentials['goodreads']['key'], 'id': book_id, 'format': 'xml'})
 		return url.format(query_params=query_params)
 
+	def remove_tags(self, input):
+		return re.sub(r'<[^>]*>', " ", input)
+
 	def get_core_data(self):
 		core_data = dict()
 		for node in grresponse.BOOK_NODE_DESCENDENTS:
 			text = self.book_node.find(node).text
 			if text:
+				if node == grresponse.BOOK_NODE_DESCRIPTION:
+					text = self.remove_tags(input=text)
 				core_data[node] = text
 		return core_data
 

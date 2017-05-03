@@ -64,9 +64,9 @@ def reviews_with_sentiment():
 	]
 	amzn_reviews, gr_reviews = [reviews.get() for reviews in fetch_review_processes]
 	review_texts = [review.get('body') for review in itertools.chain(amzn_reviews, gr_reviews)]
-	sentiments = []
-	for review in review_texts:
-		sentiments.append(fastClassifier.predict_sentiment(review)[0])
+	sentiments = fastClassifier.predict_sentiment(review_texts)
+	# for review in review_texts:
+	# 	sentiments.append(fastClassifier.predict_sentiment(review)[0])
 	for idx, response in enumerate(itertools.chain(amzn_reviews, gr_reviews)):
-		response['sentiment'] = int(sentiments[idx])
+		response['sentiment'] = float(sentiments[idx])
 	return jsonify({'amazon': amzn_reviews, 'goodreads': gr_reviews})
