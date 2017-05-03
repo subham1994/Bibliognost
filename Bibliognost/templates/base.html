@@ -6,12 +6,58 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.98.2/css/materialize.min.css">
         <link rel="stylesheet" href="{{ url_for('static', filename='local/css/style.css') }}">
+		<link href="https://fonts.googleapis.com/css?family=Lato:400,700,900" rel="stylesheet">
+		<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     </head>
 
     <body>
+		{% block body %}
+        <header>
+			<div class="hero-text-box">
+				<div class="container">
+					<div class="row">
+						<div class="col l6 s12 m10 offset-l3 offset-m1">
+							<h1>Bibliognost</h1>
+							<h3>Sentiment analysis done right !</h3>
+							<nav>
+								<div class="nav-wrapper">
+									<form>
+										<div class="input-field">
+											<input id="search" type="search" placeholder="Enter book name to get started" required>
+											<label class="label-icon" for="search"><i class="material-icons">search</i></label>
+											<i class="material-icons">close</i>
+											<div id="search-results" class="search-results collection" style="display:none;">
+												<div class="center" style="margin-top: 10px;">
+													<div class="preloader-wrapper active">
+														<div class="spinner-layer spinner-red-only">
+															<div class="circle-clipper left">
+																<div class="circle"></div>
+															</div>
+															<div class="gap-patch">
+																<div class="circle"></div>
+															</div>
+															<div class="circle-clipper right">
+																<div class="circle"></div>
+															</div>
+														</div>
+													</div>
+												</div>
+											</div>
+										</div>
+									</form>
+								</div>
+							</nav>
+						</div>
+					</div>
+				</div>
+            </div>
+        </header>
+		{% endblock %}
 
-        <h1>Hello materialize</h1>
         <script src="{{ url_for('static', filename='vendor/js/jquery.min.js') }}"></script>
+		<script src="https://cdn.jsdelivr.net/lodash/4.17.4/lodash.min.js"></script>
+		<script src="{{ url_for('static', filename='local/js/script.js') }}"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.98.2/js/materialize.min.js"></script>
+		{% block script %}{% endblock %}
     </body>
 </html>

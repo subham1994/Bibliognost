@@ -1,0 +1,75 @@
+{% extends 'base.html' %}
+
+{% block body %}
+<div class="navbar-fixed">
+	<nav>
+		<div class="container">
+			<a href="/" class="brand-logo">Bibliognost</a>
+		</div>	
+	</nav>
+</div>
+
+<div class="container" id="main-content">
+	<div class="row">
+		<div class="col l8 m7 s12">
+			<div class="row">
+				<div class="col l3">
+					<img src="{{ book_details['image_url'] }}" class="book-cover" alt="book_cover">
+				</div>
+				<div class="col l9">
+					<p class="book-title">{{ book_details['title'] }}</h3>
+					<p class="authors">
+						<i class="tiny material-icons">supervisor_account</i>
+						{% for id in book_details['authors'] %}
+						<div class="chip">
+							{{ book_details['authors'][id]['name'] }}
+						</div>
+						{% endfor %}
+					</p>
+					<hr>
+
+					
+				</div>
+			</div>
+			<ul class="collapsible" data-collapsible="expandable">
+				<li>
+					<div class="collapsible-header active"><i class="material-icons">description</i>Description</div>
+					<div class="collapsible-body"><span>{{ book_details['description'] }}</span></div>
+				</li>
+			</ul>
+		</div>
+
+		<div class="col l4 m5 s12">
+			<div style="display: none;">
+				{% for id in book_details['similar_books'] %}
+					<p class="similar-book-id" id="{{ id }}"></p>
+				{% endfor %}
+			</div>
+			<div class="collection with-header z-depth-2">
+				<div class="collection-header similar">Similar-books</div>
+				<div id="similar-books">
+					<div class="center" style="margin-top: 10px;">
+						<div class="preloader-wrapper active">
+							<div class="spinner-layer spinner-red-only">
+								<div class="circle-clipper left">
+									<div class="circle"></div>
+								</div>
+								<div class="gap-patch">
+									<div class="circle"></div>
+								</div>
+								<div class="circle-clipper right">
+									<div class="circle"></div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+{% endblock %}
+
+{% block script %}
+<script src="{{ url_for('static', filename='local/js/loaders.js') }}"></script>
+{% endblock %}

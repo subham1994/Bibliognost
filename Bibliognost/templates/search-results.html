@@ -1,0 +1,7 @@
+
+{% for result in results %}
+<a href="/book/{{ result['id'] }}" class="collection-item avatar">
+	<img src="{{ result['small_image_url'] }}" alt="" class="circle">
+	<span class="title">{{ result["title"] }}</span>
+</a>
+{% endfor %}
