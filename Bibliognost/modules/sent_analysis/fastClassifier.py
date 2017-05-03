@@ -119,7 +119,7 @@ def predict_sentiment(review):
 
 	print("Extracting the Features from the input.")
 	start = time.time()
-	X_test = vectorizer.transform([review])
+	X_test = vectorizer.transform(review)
 	print("Feature Extraction done in  %.3f secs" % (time.time() - start))
 
 	print("Sentiment classification of the the input.")
