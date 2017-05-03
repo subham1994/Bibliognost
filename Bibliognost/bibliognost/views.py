@@ -17,6 +17,12 @@ def index():
 	return render_template('base.html')
 
 
+@biblio.route('/book/<book_id>')
+def book_details(book_id):
+	book = GoodReads(book_id)
+	return render_template('book-details.html', book_details=book.get_book_data())
+
+
 @biblio.route('/book-meta')
 def book_meta():
 	book = GoodReads(request.args.get('book_id'))
@@ -26,7 +32,7 @@ def book_meta():
 @biblio.route('/search')
 def search():
 	results = BookSearch(request.args.get('q')).get_results()
-	return jsonify(results)
+	return render_template('search-results.html', results=results)
 
 
 def amazon_reviews(isbn):
