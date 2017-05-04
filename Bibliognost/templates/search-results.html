@@ -3,5 +3,9 @@
 <a href="/book/{{ result['id'] }}" class="collection-item avatar">
 	<img src="{{ result['small_image_url'] }}" alt="" class="circle">
 	<span class="title">{{ result["title"] }}</span>
+	<p class="author">by {{ result["author"] }}</p>
+	{% if result["publication_year"] %}
+	<p class="right-align pub-year">{{ result["publication_year"] }}</p>
+	{% endif %}
 </a>
 {% endfor %}
