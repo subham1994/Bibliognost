@@ -124,9 +124,9 @@ def predict_sentiment(review):
 
 	print("Sentiment classification of the the input.")
 	start = time.time()
-	sentiment = clf.predict(X_test)
+	sentiment = clf.predict_proba(X_test)
 	print("Classification done in  %.3f secs" % (time.time() - start))
-	return sentiment
+	return sentiment[:, 1]
 
 
 if os.path.isfile(os.path.join(BASE_DIR, PathInfo.PICKLE_BASE_DIR + PathInfo.INIT_CLASSIFIER)):
