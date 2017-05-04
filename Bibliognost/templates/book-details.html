@@ -5,7 +5,7 @@
 	<nav>
 		<div class="container">
 			<a href="/" class="brand-logo">Bibliognost</a>
-		</div>	
+		</div>
 	</nav>
 </div>
 
@@ -16,14 +16,14 @@
 
 				<!--book image-->
 				<div class="col l3">
-					<img src="{{ book_details['image_url'] }}" class="book-cover" alt="book_cover">
+					<img src="{{ book_details['image_url'] }}" class="book-cover z-depth-1" alt="book_cover">
 				</div>
 
 				<!--book details-->
 				<div class="col l9">
 					<p class="book-title">{{ book_details['title'] }}
 					<p class="authors">
-						<i class="tiny material-icons">supervisor_account</i>
+						<i class="tiny material-icons" style="margin-right: 3px;">supervisor_account</i>
 						{% for id in book_details['authors'] %}
 						<div class="chip">
 							{{ book_details['authors'][id]['name'] }}
@@ -32,6 +32,24 @@
 					</p>
 					<hr>
 
+					<table>
+						<tr>
+							<td class="col-name">publisher</td>
+							<td>{{ book_details['publisher'] }}</td>
+						</tr>
+						<tr>
+							<td class="col-name">Number of pages</td>
+							<td>{{ book_details['num_pages'] }}</td>
+						</tr>
+						<tr>
+							<td class="col-name">isbn</td>
+							<td>{{ book_details['isbn'] }}</td>
+						</tr>
+						<tr>
+							<td class="col-name">published in</td>
+							<td>{{ book_details['publication_year'] }}</td>
+						</tr>
+					</table>
 					
 				</div>
 			</div>
@@ -40,7 +58,32 @@
 			<ul class="collapsible" data-collapsible="expandable">
 				<li>
 					<div class="collapsible-header active"><i class="material-icons">description</i>Description</div>
-					<div class="collapsible-body"><span>{{ book_details['description'] }}</span></div>
+					<div class="collapsible-body"><p>{{ book_details['description'] }}</p></div>
+				</li>
+			</ul>
+
+			<!--book reviews-->
+			<ul class="collapsible" data-collapsible="expandable">
+				<li>
+					<div class="collapsible-header active"><i class="material-icons">record_voice_over</i>Reviews</div>
+					
+					<div class="collasible-body" id="reviews" data-isbn="{{ book_details['isbn'] }}" data-url="{{ book_details['url'] }}">
+						<div class="center" style="margin-top: 10px;">
+							<div class="preloader-wrapper active">
+								<div class="spinner-layer spinner-red-only">
+									<div class="circle-clipper left">
+										<div class="circle"></div>
+									</div>
+									<div class="gap-patch">
+										<div class="circle"></div>
+									</div>
+									<div class="circle-clipper right">
+										<div class="circle"></div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
 				</li>
 			</ul>
 		</div>
