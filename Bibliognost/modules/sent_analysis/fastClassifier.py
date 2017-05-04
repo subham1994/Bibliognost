@@ -111,6 +111,41 @@ def predict_sentiment(review):
 	:param review: string, document string is passed as an argument
 	:return: binary value 0 for negative and 1 for positive
 	"""
+	if os.path.isfile(os.path.join(BASE_DIR, PathInfo.PICKLE_BASE_DIR + PathInfo.INIT_CLASSIFIER)):
+		print("Loading the vectorizer")
+		start = time.time()
+		with open(os.path.join(BASE_DIR, PathInfo.PICKLE_BASE_DIR + PathInfo.INIT_VECTORIZER), 'rb') as vect_f:
+			vectorizer = pickle.load(vect_f)
+		print("Vectorizer loaded in  %.3f" % (time.time() - start))
+
+		print("Loading the classifier.")
+		start = time.time()
+		with open(os.path.join(BASE_DIR, PathInfo.PICKLE_BASE_DIR + PathInfo.INIT_CLASSIFIER), 'rb') as clf_f:
+			clf = pickle.load(clf_f)
+		print("Classifier loaded in  %.3f" % (time.time() - start))
+
+	else:
+		print("Loading the data sets.")
+		start = time.time()
+		X, Y = load_data(file=PathInfo.MIXED_REVIEW_FILE)
+		print("Data sets loaded in %.2f secs." % (time.time() - start))
+
+		print("Extracting the features.")
+		vectorizer = all_feature_vectorizer()
+		start = time.time()
+		X_Features = vectorizer.fit_transform(X)
+		print("Feature Extraction done in %.3f" % (time.time() - start))
+
+		with open(os.path.join(BASE_DIR, PathInfo.PICKLE_BASE_DIR + PathInfo.INIT_VECTORIZER), 'wb') as vect_f:
+			pickle.dump(vectorizer, vect_f)
+
+		print("Training the classifier.")
+		start = time.time()
+		clf = train_model(MultinomialNB, X_Features, Y)
+		print("Classifier trained in %.3f secs." % (time.time() - start))
+
+		with open(os.path.join(BASE_DIR, PathInfo.PICKLE_BASE_DIR + PathInfo.INIT_CLASSIFIER), 'wb') as clf_f:
+			pickle.dump(clf, clf_f)
 
 	# statistics :
 	# Best Multinomail Classifier with allFeature Vectorizer gives the following output for negative(only) data sets and
@@ -124,43 +159,9 @@ def predict_sentiment(review):
 
 	print("Sentiment classification of the the input.")
 	start = time.time()
-	sentiment = clf.predict(X_test)
+	sentiment = clf.predict_proba(X_test)
 	print("Classification done in  %.3f secs" % (time.time() - start))
-	return sentiment
+	return sentiment[:, 1]
 
 
-if os.path.isfile(os.path.join(BASE_DIR, PathInfo.PICKLE_BASE_DIR + PathInfo.INIT_CLASSIFIER)):
-	print("Loading the vectorizer")
-	start = time.time()
-	with open(os.path.join(BASE_DIR, PathInfo.PICKLE_BASE_DIR + PathInfo.INIT_VECTORIZER), 'rb') as vect_f:
-		vectorizer = pickle.load(vect_f)
-	print("Vectorizer loaded in  %.3f" % (time.time() - start))
 
-	print("Loading the classifier.")
-	start = time.time()
-	with open(os.path.join(BASE_DIR, PathInfo.PICKLE_BASE_DIR + PathInfo.INIT_CLASSIFIER), 'rb') as clf_f:
-		clf = pickle.load(clf_f)
-	print("Classifier loaded in  %.3f" % (time.time() - start))
-
-else:
-	print("Loading the data sets.")
-	start = time.time()
-	X, Y = load_data(file=PathInfo.MIXED_REVIEW_FILE)
-	print("Data sets loaded in %.2f secs." % (time.time() - start))
-
-	print("Extracting the features.")
-	vectorizer = all_feature_vectorizer()
-	start = time.time()
-	X_Features = vectorizer.fit_transform(X)
-	print("Feature Extraction done in %.3f" % (time.time() - start))
-
-	with open(os.path.join(BASE_DIR, PathInfo.PICKLE_BASE_DIR + PathInfo.INIT_VECTORIZER), 'wb') as vect_f:
-		pickle.dump(vectorizer, vect_f)
-
-	print("Training the classifier.")
-	start = time.time()
-	clf = train_model(MultinomialNB, X_Features, Y)
-	print("Classifier trained in %.3f secs." % (time.time() - start))
-
-	with open(os.path.join(BASE_DIR, PathInfo.PICKLE_BASE_DIR + PathInfo.INIT_CLASSIFIER), 'wb') as clf_f:
-		pickle.dump(clf, clf_f)

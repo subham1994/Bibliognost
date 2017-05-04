@@ -58,8 +58,8 @@ class LinguisticVectorizer(BaseEstimator):
 
 			if pos_tag.startswith("RB"):
 				adverbs += 1
-
-		l = len(words)
+		# adding one to consider empty document
+		l = len(words) + 1
 		return [nouns / l, adjectives / l, verbs / l, adverbs / l]
 
 	def transform(self, documents):
