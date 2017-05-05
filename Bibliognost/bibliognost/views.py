@@ -25,8 +25,11 @@ def book_details(book_id):
 
 @biblio.route('/book-meta')
 def book_meta():
-	book = GoodReads(request.args.get('book_id'))
-	return jsonify(book.get_book_data())
+	book_ids = request.args.get('book_ids').split(',')
+	pool = multiprocessing.Pool()
+	book_details_processes = [pool.apply_async(GoodReads(book_id).get_book_data) for book_id in book_ids]
+	book_details = [book_detail.get() for book_detail in book_details_processes]
+	return jsonify(book_details)
 
 
 @biblio.route('/search')
@@ -67,4 +70,4 @@ def reviews_with_sentiment():
 	sentiments = fastClassifier.predict_sentiment(review_texts)
 	for idx, response in enumerate(itertools.chain(amzn_reviews, gr_reviews)):
 		response['sentiment'] = float(sentiments[idx])
-	return jsonify({'amazon': amzn_reviews, 'goodreads': gr_reviews})
+	return jsonify({'amazon': amzn_reviews, 'goodreads': gr_reviews, 'num_reviews': len(review_texts)})

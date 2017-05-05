@@ -1,73 +1,137 @@
 {% extends 'base.html' %}
 
 {% block body %}
-<div class="navbar-fixed">
-	<nav>
-		<div class="container">
-			<a href="/" class="brand-logo">Bibliognost</a>
-		</div>
-	</nav>
-</div>
+	<div class="navbar-fixed">
+		<nav id="main-nav">
+			<div class="container">
+				<a href="/" class="brand-logo"><img src="{{ url_for('static', filename='local/img/logo.png') }}" alt="logo-img"> Bibliognost</a>
+			</div>
+		</nav>
+	</div>
 
-<div class="container" id="main-content">
-	<div class="row">
-		<div class="col l8 m7 s12">
-			<div class="row">
+	<div class="container" id="main-content">
+		<div class="row">
+			<div class="col l8 m7 s12">
+				<div class="row">
 
-				<!--book image-->
-				<div class="col l3">
-					<img src="{{ book_details['image_url'] }}" class="book-cover z-depth-1" alt="book_cover">
+					<!--book image-->
+					<div class="col l3">
+						<img src="{{ book_details['image_url'] }}" class="book-cover z-depth-1" alt="book_cover">
+					</div>
+
+					<!--book details-->
+					<div class="col l9">
+						<p class="book-title">{{ book_details['title'] }}
+						<p class="authors">
+							{% for id in book_details['authors'] %}
+							<div class="chip">
+								{{ book_details['authors'][id]['name'] }}
+							</div>
+							{% endfor %}
+						</p>
+						<hr>
+
+						<table>
+							<tr>
+								<td class="col-name">publisher</td>
+								<td>{{ book_details['publisher'] }}</td>
+							</tr>
+							<tr>
+								<td class="col-name">Number of pages</td>
+								<td>{{ book_details['num_pages'] }}</td>
+							</tr>
+							<tr>
+								<td class="col-name">isbn</td>
+								<td>{{ book_details['isbn'] }}</td>
+							</tr>
+							<tr>
+								<td class="col-name">published in</td>
+								<td>{{ book_details['publication_year'] }}</td>
+							</tr>
+						</table>
+						
+					</div>
 				</div>
 
-				<!--book details-->
-				<div class="col l9">
-					<p class="book-title">{{ book_details['title'] }}
-					<p class="authors">
-						<i class="tiny material-icons" style="margin-right: 3px;">supervisor_account</i>
-						{% for id in book_details['authors'] %}
-						<div class="chip">
-							{{ book_details['authors'][id]['name'] }}
+				<!--book description-->
+				<ul class="collapsible" data-collapsible="expandable">
+					<li>
+						<div class="collapsible-header active"><i class="material-icons">description</i>Description</div>
+						<div class="collapsible-body"><p>{{ book_details['description'] }}</p></div>
+					</li>
+				</ul>
+
+				<!--Graphical analysis-->
+				<ul class="collapsible" data-collapsible="expandable">
+					<li>
+						<div class="collapsible-header active"><i class="material-icons">insert_chart</i>Graphical Analysis</div>
+						
+						<div class="collasible-body">
+
+							<!--show a dummy indicator-->
+							<div class="center" style="margin: 20px 25px;" id="loader">
+								<div class="preloader-wrapper active">
+									<div class="spinner-layer spinner-red-only">
+										<div class="circle-clipper left">
+											<div class="circle"></div>
+										</div>
+										<div class="gap-patch">
+											<div class="circle"></div>
+										</div>
+										<div class="circle-clipper right">
+											<div class="circle"></div>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="center" style="margin: 20px 25px;">
+								<canvas id="line-chart"></canvas>
+							</div>
 						</div>
-						{% endfor %}
-					</p>
-					<hr>
+					</li>
+				</ul>
 
-					<table>
-						<tr>
-							<td class="col-name">publisher</td>
-							<td>{{ book_details['publisher'] }}</td>
-						</tr>
-						<tr>
-							<td class="col-name">Number of pages</td>
-							<td>{{ book_details['num_pages'] }}</td>
-						</tr>
-						<tr>
-							<td class="col-name">isbn</td>
-							<td>{{ book_details['isbn'] }}</td>
-						</tr>
-						<tr>
-							<td class="col-name">published in</td>
-							<td>{{ book_details['publication_year'] }}</td>
-						</tr>
-					</table>
-					
-				</div>
+				<!--book reviews-->
+				<ul class="collapsible" data-collapsible="expandable">
+					<li>
+						<div class="collapsible-header active"><i class="material-icons">record_voice_over</i>Reviews</div>
+						
+						<div class="collasible-body" id="reviews" data-isbn="{{ book_details['isbn'] }}" data-url="{{ book_details['url'] }}">
+							<!--show a dummy indicator-->
+							<div class="center" style="margin-top: 10px;">
+								<div class="preloader-wrapper active">
+									<div class="spinner-layer spinner-red-only">
+										<div class="circle-clipper left">
+											<div class="circle"></div>
+										</div>
+										<div class="gap-patch">
+											<div class="circle"></div>
+										</div>
+										<div class="circle-clipper right">
+											<div class="circle"></div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</li>
+				</ul>
 			</div>
 
-			<!--book description-->
-			<ul class="collapsible" data-collapsible="expandable">
-				<li>
-					<div class="collapsible-header active"><i class="material-icons">description</i>Description</div>
-					<div class="collapsible-body"><p>{{ book_details['description'] }}</p></div>
-				</li>
-			</ul>
+			<div class="col l4 m5 s12">
+				
+				<!--maintain ids of all similar books-->
+				<div style="display: none;">
+					{% for id in book_details['similar_books'] %}
+						<p class="similar-book-id" id="{{ id }}"></p>
+					{% endfor %}
+				</div>
 
-			<!--book reviews-->
-			<ul class="collapsible" data-collapsible="expandable">
-				<li>
-					<div class="collapsible-header active"><i class="material-icons">record_voice_over</i>Reviews</div>
+				<div class="collection with-header z-depth-1" id="similar-books-box">
+					<div class="collection-header similar">Similar-books</div>
 					
-					<div class="collasible-body" id="reviews" data-isbn="{{ book_details['isbn'] }}" data-url="{{ book_details['url'] }}">
+					<!--show a dummy indicator and populate it with similar books on page load-->
+					<div id="similar-books">
 						<div class="center" style="margin-top: 10px;">
 							<div class="preloader-wrapper active">
 								<div class="spinner-layer spinner-red-only">
@@ -84,47 +148,14 @@
 							</div>
 						</div>
 					</div>
-				</li>
-			</ul>
-		</div>
 
-		<div class="col l4 m5 s12">
-			
-			<!--maintain ids of all similar books-->
-			<div style="display: none;">
-				{% for id in book_details['similar_books'] %}
-					<p class="similar-book-id" id="{{ id }}"></p>
-				{% endfor %}
-			</div>
-
-			<div class="collection with-header z-depth-1" id="similar-books-box">
-				<div class="collection-header similar">Similar-books</div>
-				
-				<!--show a dummy indicator and populate it with similar books on page load-->
-				<div id="similar-books">
-					<div class="center" style="margin-top: 10px;">
-						<div class="preloader-wrapper active">
-							<div class="spinner-layer spinner-red-only">
-								<div class="circle-clipper left">
-									<div class="circle"></div>
-								</div>
-								<div class="gap-patch">
-									<div class="circle"></div>
-								</div>
-								<div class="circle-clipper right">
-									<div class="circle"></div>
-								</div>
-							</div>
-						</div>
-					</div>
 				</div>
-
 			</div>
 		</div>
 	</div>
-</div>
 {% endblock %}
 
 {% block script %}
-<script src="{{ url_for('static', filename='local/js/loaders.js') }}"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.bundle.min.js"></script>
+	<script src="{{ url_for('static', filename='local/js/loaders.js') }}"></script>
 {% endblock %}

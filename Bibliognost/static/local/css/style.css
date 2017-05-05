@@ -55,7 +55,18 @@ header {
 }
 
 nav {
-    background: #7e349d;
+    opacity: 0.9;
+}
+
+#main-nav {
+    background: #FFF;
+    opacity: 0.85;
+}
+
+.brand-logo img {
+    padding-top: 8px;
+    width: 48px;
+    height: 48px;
 }
 
 .hero-text-box {
@@ -73,7 +84,7 @@ nav {
 .hero-text-box nav {
     color: #777;
     margin-top: 35px; 
-    background: #F75C4C;
+    background: #e74c3c;
     box-shadow: 0 1px 3px 0 rgba(0,0,0,0.2),0 1px 1px 0 rgba(0,0,0,0.14),0 2px 1px -1px rgba(0,0,0,0.12);
 }
 
@@ -99,8 +110,8 @@ p.authors, .collection-header, .chip, td, .review-body, .review-title {
     color: #576366;
 }
 
-.review-details, p.book-title {
-    color: #7e349d;
+.review-details, p.book-title, .brand-logo {
+    color: #2980b9 !important;
 }
 
 .collection .collection-item.avatar .title, .collection-header,
@@ -117,7 +128,8 @@ p.authors, .collection-header, .chip, td, .review-body, .review-title {
 }
 
 .collection-header, p.book-title {
-    font-size: 18px;
+    font-size: 19px;
+    margin-bottom: 1px;
 }
 
 p.book-title {
@@ -177,7 +189,7 @@ hr {
 }
 
 #similar-books {
-    max-height: 450px;
+    max-height: 470px;
 }
 
 td {
